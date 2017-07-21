@@ -13,7 +13,7 @@ typedef struct cell {
 	struct cell *next;
 }cell;
 
-void display_snake(cell *head);
+void display_snake(cell *head); 
 
 void gotoxy(int x, int y);
 

@@ -16,9 +16,9 @@ int main() {
 
 	cell *snake=NULL;
 
-	add_cell(&snake, create_cell(3,2));
+	add_cell(&snake, create_cell(2,1));
 
-	add_cell(&snake, create_cell(3,1));
+	add_cell(&snake, create_cell(1,1));
 
  
 	display_snake(snake);
