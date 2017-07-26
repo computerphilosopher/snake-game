@@ -1,3 +1,4 @@
+
 #include <stdio.h>
 
 #include <conio.h> 
@@ -19,12 +20,18 @@ int main() {
 	cell *snake = NULL;
 
 	int key = RIGHT;
+	int i=0;
 
 	add_cell(&snake, create_cell(2,1 ));
 	add_cell(&snake, create_cell(1,1 ));
 
-	Snake_Control(key, snake);
-	
+	while (1) {
+		Sleep(300);
+
+		snake_control(RIGHT, snake);
+
+
+	}
 	return 0;
 
 }
@@ -51,11 +58,14 @@ void display_location(cell *head) {
 	return;
 }
 
-void display_snake(cell *head) {
+void render_snake(cell *head) {
 
 	cell *c = head;
+	
+	system("cls");
 
 	while (c) {
+		
 		gotoxy(c->cx, c->cy);
 		printf("¡Û");
 		c = c->next;
@@ -89,36 +99,21 @@ bool out_of_board (int key, int cx, int cy) {
 
 
 
-void Cell_Move(int key, int *cx, int *cy) {
+void move_cell(int key, int *cx, int *cy) {
 
 	if (out_of_board(key, *cx, *cy)) return;
 
 	switch (key) {
 	case UP:
-		gotoxy(*cx,(*cy)--);
-		printf(" ");
-		gotoxy(*cx, *cy);
-		printf("¡Û");
-
+		(*cy)--;
 	case DOWN:
-		gotoxy(*cx, (*cy)++);
-		printf(" ");
-		gotoxy(*cx, *cy);
-		printf("¡Û");
-
+		 (*cy)++;
 	case LEFT:
-		gotoxy((*cx)--, *cy);
-		printf(" ");
-		gotoxy(*cx, *cy);
-		printf("¡Û");
-
+		(*cx)--;
 	case RIGHT:
-		gotoxy((*cx)++, *cy);
-		printf(" ");
-		gotoxy(*cx, *cy);
-		printf("¡Û");
-	
-	}
+		(*cx)++;
+
+			}
 
  } 
 
@@ -191,7 +186,7 @@ int prev_cell_location(cell *prev) {
 	
 	}
 
-void follow_prev_cell(cell *head) {
+void follow_head(cell *head) {
 
 	cell *prev = head;
 	cell *cur = prev->next;
@@ -200,19 +195,19 @@ void follow_prev_cell(cell *head) {
 
 		switch (prev_cell_location(prev)) {
 		case UP: 
-			Cell_Move(UP, &cur->cx, &cur->cy);
+			move_cell(UP, &cur->cx, &cur->cy);
 			break;
 		
 		case DOWN:
-			Cell_Move(DOWN, &cur->cx, &cur->cy);
+			move_cell(DOWN, &cur->cx, &cur->cy);
 			break;
 
 		case LEFT:
-			Cell_Move(LEFT, &cur->cx, &cur->cy);
+			move_cell(LEFT, &cur->cx, &cur->cy);
 			break;
 
 		case RIGHT: 
-			Cell_Move(RIGHT, &cur->cx, &cur->cy);
+			move_cell(RIGHT, &cur->cx, &cur->cy);
 			break;
 
 		case SAME:
@@ -235,45 +230,45 @@ void follow_prev_cell(cell *head) {
 
 	
 
-void Snake_Control(int key, cell *head) {
+void snake_control(int key, cell *head) {
 
 	cell *c = head;
 
-	int head_x = head->cx;
-	int head_y = head->cy;
- 
 	int i = 0;
 
 
 		switch (key) {
 
 		case UP:
-			follow_prev_cell(c);
+			follow_head(c);
+			move_cell(UP, &c->cx, &c->cy);
 			
-			Cell_Move(UP, &c->cx, &c->cy);
+			render_snake(head);
 			break;
 
 
 		case DOWN:
-			follow_prev_cell(c);
-			Cell_Move(DOWN, &c->cx, &c->cy);
 			
+			follow_head(c);
+			move_cell(DOWN, &c->cx, &c->cy);
+			render_snake(head);
 			break;
 
 
 
 		case LEFT:
-			follow_prev_cell(c); 
-			Cell_Move(LEFT, &c->cx, &c->cy);
-			
+
+			follow_head(c); 	
+			move_cell(LEFT, &c->cx, &c->cy);
+			render_snake(head);
 			break;
 
 
 		case RIGHT:
 			
-			follow_prev_cell(c);
-			Cell_Move(RIGHT, &c->cx, &c->cy);
-			
+			follow_head(c);
+			move_cell(RIGHT, &c->cx, &c->cy);
+			render_snake(head);
 			
 			break;
 

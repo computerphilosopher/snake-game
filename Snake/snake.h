@@ -18,20 +18,19 @@ typedef struct cell {
 
 void display_location(cell *head); 
 
-void display_snake(cell *head);
+void render_snake(cell *head);
 
 void gotoxy(int x, int y);
 
-void Cell_Move(int key, int *cx, int *cy);
+void move_cell(int key, int *cx, int *cy);
 
 cell *create_cell(int cx, int cy);
 
 void add_cell(cell **snake, cell *new_node);
 
-void follow_head_x(int head_x, cell *c);
+void follow_head(cell *head);
 
-void follow_head_y(int head_y, cell *c);
 
-void Snake_Control(int key, cell *head);
+void snake_control(int key, cell *head);
 
 
