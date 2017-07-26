@@ -11,24 +11,23 @@
 #include <math.h>
 
 #include "snake.h" 
+
+#include<stdbool.h>
  
 int main() {
 
-	cell *snake=NULL;
+	cell *snake = NULL;
 
-	add_cell(&snake, create_cell(2,1));
+	int key = RIGHT;
 
-	add_cell(&snake, create_cell(1,1));
+	add_cell(&snake, create_cell(2,1 ));
+	add_cell(&snake, create_cell(1,1 ));
 
- 
-	display_snake(snake);
+	Snake_Control(key, snake);
 	
-
-	
- 
 	return 0;
-}
 
+}
 void gotoxy(int x, int y) {
 
 	COORD Pos = { x - 1, y - 1 };
@@ -38,7 +37,9 @@ void gotoxy(int x, int y) {
 }
 
 
-void display_snake(cell *head) {
+
+
+void display_location(cell *head) {
 	
 	cell *h = head;
 
@@ -50,19 +51,57 @@ void display_snake(cell *head) {
 	return;
 }
 
+void display_snake(cell *head) {
+
+	cell *c = head;
+
+	while (c) {
+		gotoxy(c->cx, c->cy);
+		printf("○");
+		c = c->next;
+	}
+
+	
+}
+
+bool out_of_board (int key, int cx, int cy) {
+
+	switch (key) {
+	case UP:
+		if (1 > --cy) return true;
+		else return false;
+
+	case DOWN:
+		if (BOARD_HEIGHT < ++cy) return true;
+		else return false;
+
+	case LEFT:
+		if (1 > --cx) return true;
+		else return false;
+
+	case RIGHT:
+		if (BOARD_WIDTH < ++cx) return true;
+		else return false;
+	}
+		
+
+	}
+
 
 
 void Cell_Move(int key, int *cx, int *cy) {
 
+	if (out_of_board(key, *cx, *cy)) return;
+
 	switch (key) {
 	case UP:
-		gotoxy(*cx,(*cy)++);
+		gotoxy(*cx,(*cy)--);
 		printf(" ");
 		gotoxy(*cx, *cy);
 		printf("○");
 
 	case DOWN:
-		gotoxy(*cx, (*cy)--);
+		gotoxy(*cx, (*cy)++);
 		printf(" ");
 		gotoxy(*cx, *cy);
 		printf("○");
@@ -119,54 +158,80 @@ void add_cell(cell **head, cell *new_node){
  
 }
 
-void follow_head_x(int head_x , int *cx, int *cy) {
+
+int prev_cell_location(cell *prev) {	
+
+	cell *cur = prev->next;
+
+	if (prev->cx != cur->cx && prev->cy != cur->cy) {
+		return ERROR;
+	}
+	
+	if (prev->cx == cur->cx && prev->cy == cur->cy) {
+		return SAME;
+	}
+
+	if (prev->cx > cur->cx) {
+		return RIGHT;
+	}
+
+	else if (prev->cx < cur->cx) {
+		return LEFT;
+	}
+
+	else if (prev->cy > cur->cy) {
+		return DOWN ;
+	}
+
+	else if (prev->cy > cur->cy) {
+		return UP;
+	}
+
 
 	
-	int i = 0;
-
-	int k = head_x - (*cx);
-
-	if (k > 0) {
-		for (i = 0; i < k; i++) {
-			Cell_Move(RIGHT, cx, cy);
-		}
 	}
 
-	else if (k < 0) {
-		for (i = 0; i < abs(k); i++) {
-			Cell_Move(LEFT, cx, cy);
-		}
-	}
+void follow_prev_cell(cell *head) {
 
-	else return;
+	cell *prev = head;
+	cell *cur = prev->next;
 
-}
+	while (cur) {
+
+		switch (prev_cell_location(prev)) {
+		case UP: 
+			Cell_Move(UP, &cur->cx, &cur->cy);
+			break;
 		
+		case DOWN:
+			Cell_Move(DOWN, &cur->cx, &cur->cy);
+			break;
 
-void follow_head_y(int head_y, int *cx, int *cy) {
+		case LEFT:
+			Cell_Move(LEFT, &cur->cx, &cur->cy);
+			break;
 
-	
-	
-	int i = 0;
+		case RIGHT: 
+			Cell_Move(RIGHT, &cur->cx, &cur->cy);
+			break;
 
-	int k = head_y - (*cy);
+		case SAME:
+			return;
+			break;
 
-	if (k > 0) {
-		for (i = 0; i < k; i++) {
-			Cell_Move(DOWN, cx, cy);
+		case ERROR:
+			fprintf(stderr, "세포 위치 에러");
+			break;
+			
 		}
+
+		prev = cur;
+		cur = cur->next;
+		
 	}
 
-	else if (k < 0) {
-		for (i = 0; i < abs(k); i++) {
-			Cell_Move(UP, cx, cy);
-		}
-	}
-
-	else return;
-
+ 
 }
-
 
 	
 
@@ -180,41 +245,41 @@ void Snake_Control(int key, cell *head) {
 	int i = 0;
 
 
-	while (c) {
-
 		switch (key) {
 
 		case UP:
-			follow_head_x(head_x, &c->cx, &c->cy);
+			follow_prev_cell(c);
+			
 			Cell_Move(UP, &c->cx, &c->cy);
-			c = c->next;
 			break;
 
 
 		case DOWN:
-			follow_head_x(head_x, &c->cx, &c->cy);
+			follow_prev_cell(c);
 			Cell_Move(DOWN, &c->cx, &c->cy);
-			c = c->next;
+			
 			break;
 
 
 
 		case LEFT:
-			follow_head_y(head_y, &c->cx, &c->cy);
+			follow_prev_cell(c); 
 			Cell_Move(LEFT, &c->cx, &c->cy);
-			c = c->next;
+			
 			break;
 
 
 		case RIGHT:
-			follow_head_y(head_y, &c->cx, &c->cy);
+			
+			follow_prev_cell(c);
 			Cell_Move(RIGHT, &c->cx, &c->cy);
-			c = c->next;
+			
+			
 			break;
 
 		}
 	}
-}
+
 
 
 
