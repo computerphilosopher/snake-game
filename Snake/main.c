@@ -29,11 +29,15 @@ int main() {
 		Sleep(300);
 		if(_kbhit()) check_key(&key);
 		snake_control(key, snake);
+		Sleep(300);
+		render_snake(snake);
+		Sleep(300);
+		display_location(snake);
 	}
 
 	
 		
-	gotoxy(1, 1);
+	
 	
  
 	return 0;
