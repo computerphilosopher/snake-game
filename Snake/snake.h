@@ -1,4 +1,4 @@
-#define UP 72
+#define UP 97
 #define DOWN 80
 #define LEFT 75
 #define RIGHT 77
@@ -23,7 +23,7 @@ void render_snake(cell *head);
 
 void gotoxy(int x, int y);
 
-void move_cell(int key, int *cx, int *cy);
+void move_cell(int key, cell *c);
 
 cell *create_cell(int cx, int cy);
 
