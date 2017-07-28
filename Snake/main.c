@@ -25,7 +25,7 @@ int main() {
 	add_cell(&snake, create_cell(9, 10));
 	add_cell(&snake, create_cell(10, 10));
 
-		
+	
 		
 	while (1) {
 		Sleep(300);
@@ -33,9 +33,10 @@ int main() {
 		snake_control(key, snake);
 		
 		render_snake(snake);
-		
+
 		
 	} 
+	
 
 	return 0;
 
