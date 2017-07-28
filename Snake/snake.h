@@ -5,8 +5,9 @@
 #define SAME 0
 #define ERROR -1
 
-#define BOARD_WIDTH 32 
-#define BOARD_HEIGHT 32
+#define BOARD_WIDTH 1024 
+#define BOARD_HEIGHT 1024
+#define STRTING_POINT 512
  
 
 typedef struct cell {
@@ -33,4 +34,4 @@ void follow_head(cell *head);
 
 void snake_control(int key, cell *head);
 
-
+void check_key(int *key);

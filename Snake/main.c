@@ -19,19 +19,23 @@ int main() {
 
 	cell *snake = NULL;
 
-	int key = RIGHT;
+	int key=0;
 	int i=0;
 
-	add_cell(&snake, create_cell(2,1 ));
-	add_cell(&snake, create_cell(1,1 ));
+	add_cell(&snake, create_cell(2, 1));
+	add_cell(&snake, create_cell(1, 1));
 
 	while (1) {
 		Sleep(300);
-
-		snake_control(RIGHT, snake);
-
-
+		if(_kbhit()) check_key(&key);
+		snake_control(key, snake);
 	}
+
+	
+		
+	gotoxy(1, 1);
+	
+ 
 	return 0;
 
 }
@@ -43,6 +47,20 @@ void gotoxy(int x, int y) {
 
 }
 
+void check_key(int *key) {
+
+
+
+		(*key) = _getch();
+
+		if ((*key) == 224) {
+			(*key) = _getch();
+		}
+
+	
+
+ return;
+}
 
 
 
@@ -63,11 +81,11 @@ void render_snake(cell *head) {
 	cell *c = head;
 	
 	system("cls");
-
 	while (c) {
 		
 		gotoxy(c->cx, c->cy);
-		printf("○");
+		printf("@");
+
 		c = c->next;
 	}
 
@@ -154,37 +172,7 @@ void add_cell(cell **head, cell *new_node){
 }
 
 
-int prev_cell_location(cell *prev) {	
 
-	cell *cur = prev->next;
-
-	if (prev->cx != cur->cx && prev->cy != cur->cy) {
-		return ERROR;
-	}
-	
-	if (prev->cx == cur->cx && prev->cy == cur->cy) {
-		return SAME;
-	}
-
-	if (prev->cx > cur->cx) {
-		return RIGHT;
-	}
-
-	else if (prev->cx < cur->cx) {
-		return LEFT;
-	}
-
-	else if (prev->cy > cur->cy) {
-		return DOWN ;
-	}
-
-	else if (prev->cy > cur->cy) {
-		return UP;
-	}
-
-
-	
-	}
 
 void follow_head(cell *head) {
 
@@ -193,32 +181,9 @@ void follow_head(cell *head) {
 
 	while (cur) {
 
-		switch (prev_cell_location(prev)) {
-		case UP: 
-			move_cell(UP, &cur->cx, &cur->cy);
-			break;
-		
-		case DOWN:
-			move_cell(DOWN, &cur->cx, &cur->cy);
-			break;
-
-		case LEFT:
-			move_cell(LEFT, &cur->cx, &cur->cy);
-			break;
-
-		case RIGHT: 
-			move_cell(RIGHT, &cur->cx, &cur->cy);
-			break;
-
-		case SAME:
-			return;
-			break;
-
-		case ERROR:
-			fprintf(stderr, "세포 위치 에러");
-			break;
-			
-		}
+		cur->cx = prev->cx;
+		cur->cy = prev->cy;
+	
 
 		prev = cur;
 		cur = cur->next;
