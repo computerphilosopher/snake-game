@@ -18,9 +18,14 @@
 int main() {
 
 	cell *snake = NULL;
+    
+	food apple;
+	
 
 	int key=0;
 	int i=0;
+
+	
 
 	add_cell(&snake, create_cell(9, 10));
 	add_cell(&snake, create_cell(10, 10));
@@ -29,10 +34,12 @@ int main() {
 		
 	while (1) {
 		Sleep(300);
+
 		if(_kbhit()) check_key(&key);
-		snake_control(key, snake);
 		
-		render_snake(snake);
+		snake_control(key, snake);
+
+		display_location(snake);
 
 		
 	} 
@@ -70,8 +77,10 @@ void display_location(cell *head) {
 	
 	cell *h = head;
 
+	gotoxy(1, 1);
+
 	while (h) {
-		printf("\n(%d, %d)\n", h->cx, h->cy);
+		printf("\n(%d, %d)\n", h->x, h->y);
 		h = h->next;
 	}
 	
@@ -85,32 +94,33 @@ void render_snake(cell *head) {
 	system("cls");
 	while (c) {
 		
-		gotoxy(c->cx, c->cy);
+		gotoxy(c->x, c->y);
 		printf("@");
 
 		c = c->next;
 	}
 
 	
+	
 }
 
-bool out_of_board (int key, int cx, int cy) {
+bool out_of_board (int key, int x, int y) {
 
 	switch (key) {
 	case UP:
-		if (1 > --cy) return true;
+		if (1 > --y) return true;
 		else return false;
 
 	case DOWN:
-		if (BOARD_HEIGHT < ++cy) return true;
+		if (BOARD_HEIGHT < ++y) return true;
 		else return false;
 		
 	case LEFT:
-		if (1 > --cx) return true;
+		if (1 > --x) return true;
 		else return false;
 
 	case RIGHT:
-		if (BOARD_WIDTH < ++cx) return true;
+		if (BOARD_WIDTH < ++x) return true;
 		else return false;
 	}
 	return 0;
@@ -118,26 +128,61 @@ bool out_of_board (int key, int cx, int cy) {
 
 	}
 
+/* 뱀 머리를 꼬리쪽으로 돌리는 상황 방지*/
+int head_collision(int key, cell *c) {
+
+	int cx = c->x;
+	int cy = c->y;
+
+	int nx = c->next->x;
+	int ny = c->next->y;
+
+	switch (key) {
+	case UP:
+		if (--cy == ny) return DOWN;
+		else return false;
+		break;
+		
+	case DOWN:
+		if (++cy == ny) return UP;
+		else return false;
+		break;
+
+	case LEFT:
+		if (--cx == nx) return RIGHT;
+		else return false;
+		break;
+
+	case RIGHT:
+		if (++cx == nx) return LEFT;
+		else return false;
+		break;
+
+	}
+}
+
+
+
 
 
 void move_cell(int key, cell *c) {
 
 	
 
-	if (out_of_board(key, c->cx, c->cy)) return;
+	if (out_of_board(key, c->x, c->y)) return;
 
 	switch (key) {
 	case UP:
-		(c->cy)--;
+		(c->y)--;
 		break;
 	case DOWN:
-		(c->cy)++;
+		(c->y)++;
 		break;
 	case LEFT:
-		(c->cx)--;
+		(c->x)--;
 		break;
 	case RIGHT:
-		(c->cx)++;
+		(c->x)++;
 		break;
 
 			}
@@ -145,12 +190,12 @@ void move_cell(int key, cell *c) {
  } 
 
 
-cell *create_cell(int cx, int cy) { 
+cell *create_cell(int x, int y) { 
 	
 	cell *new_cell;
 	new_cell = (cell*)malloc(sizeof(cell));
 
-    new_cell->cx = cx; new_cell->cy = cy;
+    new_cell->x = x; new_cell->y = y;
 
 	
 
@@ -161,6 +206,7 @@ cell *create_cell(int cx, int cy) {
 void add_cell(cell **head, cell *new_node){
 
 	cell *h = *head;
+	
 
 	if (h == NULL) {
 		new_node->next = NULL;
@@ -171,8 +217,9 @@ void add_cell(cell **head, cell *new_node){
 		while (h->next!=NULL) {
 			h = h->next;
 			}
-		h->next = new_node;
-		new_node->next = NULL;
+
+	h->next = new_node;
+	new_node->next = NULL;
 
 		
 	}
@@ -190,8 +237,8 @@ void follow_head(cell *head) {
 
 	while (cur) {
 
-		cur->cx = prev->cx;
-		cur->cy = prev->cy;
+		cur->x = prev->x;
+		cur->y = prev->y;
 	
 
 		prev = cur;
@@ -207,17 +254,18 @@ void follow_head(cell *head) {
 void snake_control(int key, cell *head) {
 
 	cell *c = head;
-
-	int i = 0;
-
-
+	
+	if (head_collision(key, head)) {
+		key = head_collision(key,head);
+	}
+	
+ 
+	
 		switch (key) {
 
 		case UP:
 			follow_head(c);
 			move_cell(UP, head);
-			
-			render_snake(head);
 			break;
 
 
@@ -225,46 +273,23 @@ void snake_control(int key, cell *head) {
 			
 			follow_head(c);
 			move_cell(DOWN, head);
-			render_snake(head);
 			break;
-
-
-
+ 
 		case LEFT:
 
 			follow_head(c); 	
 			move_cell(LEFT, head);
-			render_snake(head);
 			break;
-
-
+ 
 		case RIGHT:
 			
 			follow_head(c);
 			move_cell(RIGHT, head);
-			render_snake(head);
-			
-			break;
-
+			break; 
 		}
-	}
+
+		render_snake(head);
+		
+			}
 
 
-
-
-
-
-
-
-
-	
-
-
-
-
-
-
-
-
-
-	

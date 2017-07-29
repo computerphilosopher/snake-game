@@ -9,13 +9,16 @@
 #define BOARD_HEIGHT 1024
 #define STRTING_POINT 512
  
+#define FOOD_COUNT  15
 
 typedef struct cell {
 
-	int cx; int cy;
+	int x; int y;
 
 	struct cell *next;
 }cell;
+
+typedef cell food;
 
 void display_location(cell *head); 
 
@@ -30,8 +33,7 @@ cell *create_cell(int cx, int cy);
 void add_cell(cell **snake, cell *new_node);
 
 void follow_head(cell *head);
-
-
+ 
 void snake_control(int key, cell *head);
 
-void check_key(int *key);
+void check_key(int *key); 
