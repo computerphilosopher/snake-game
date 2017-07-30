@@ -13,13 +13,15 @@
 
 #include "snake.h" 
 
-#include<stdbool.h>
+
  
 int main() {
 
 	cell *snake = NULL;
     
 	food apple;
+
+	bool food_already = false;
 	
 
 	int key=0;
@@ -39,8 +41,10 @@ int main() {
 		
 		snake_control(key, snake);
 
-		display_location(snake);
+		generate_food(&apple, snake, &food_already);
 
+		render_food(&apple);
+	
 		
 	} 
 	
@@ -99,9 +103,14 @@ void render_snake(cell *head) {
 
 		c = c->next;
 	}
+ 
+}
 
+
+void render_food(food *apple) {
 	
-	
+	gotoxy(apple->x, apple->y);
+	printf("o");
 }
 
 bool out_of_board (int key, int x, int y) {
@@ -128,8 +137,8 @@ bool out_of_board (int key, int x, int y) {
 
 	}
 
-/* 뱀 머리를 꼬리쪽으로 돌리는 상황 방지*/
-int head_collision(int key, cell *c) {
+/* 뱀 머리가 꼬리쪽으로 향하는 상황 방지*/
+int rotation_fail(int key, cell *c) {
 
 	int cx = c->x;
 	int cy = c->y;
@@ -159,6 +168,7 @@ int head_collision(int key, cell *c) {
 		break;
 
 	}
+	return false;
 }
 
 
@@ -250,13 +260,12 @@ void follow_head(cell *head) {
 }
 
 	
-
 void snake_control(int key, cell *head) {
 
 	cell *c = head;
 	
-	if (head_collision(key, head)) {
-		key = head_collision(key,head);
+	if (rotation_fail(key, head)) {
+		key = rotation_fail(key,head);
 	}
 	
  
@@ -293,3 +302,39 @@ void snake_control(int key, cell *head) {
 			}
 
 
+bool food_fail(food *apple, cell *snake) {
+
+	while (snake) {
+		
+		if (apple->x == snake->x && apple->y == snake->y) return true;
+
+		snake = snake->next;
+	}
+
+	return false;
+}
+
+
+void generate_food(food *apple, cell *snake, bool *flag) {
+
+	if ( (*flag) == true) return; /* 먹이가 이미 있으면 생성하지 않음.*/
+
+	do {
+
+		srand((unsigned)time(NULL));
+
+		int random_x = (rand() % BOARD_WIDTH - 1) + 1;
+		int random_y = (rand() % BOARD_HEIGHT - 1) + 1;
+
+		apple->x = random_x;
+		apple->y = random_y;
+
+	} while (food_fail(apple, snake)); /*먹이가 뱀과 같은 위치에 생성되면 다시 생성*/
+
+	(*flag) = true;
+
+	
+}
+
+ 
+bool function (cell *snake, food *apple){}
