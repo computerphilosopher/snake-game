@@ -38,8 +38,6 @@ void screen_init(cell *snake, food *apple);
 
 void display_location(cell *head); 
 
-void render_obj(cell *head, food *apple);
-
 void gotoxy(int x, int y);
 
 void move_cell(int key, cell *c);
@@ -74,4 +72,4 @@ void display_buffer(buf *b);
 
 void game_init(cell *snake, food *apple, buf *buffer, bool *flag);
 
-void screen_flipping(cell *snake, food *apple, buf *buffer);
+void render_obj(cell *snake, food *apple, buf *buffer);

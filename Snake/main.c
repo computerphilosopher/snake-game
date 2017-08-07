@@ -29,13 +29,18 @@ int main() {
 	add_cell(&snake, create_cell(5, 5));
  
     game_init(snake, &apple, &buffer, &food_flag);
+
+	while (1) {
+		Sleep(300);
+		if (_kbhit()) check_key(&key);
+		snake_control(key, snake);
+		render_obj(snake, &apple, &buffer);
+		eat_food(key, snake, &apple, &food_flag);
+		fill_buffer(snake, &apple, &buffer);
+		
+	}
+
 	
-	display_location(snake);
-
-	printf("%d,%d\n", apple.x, apple.y);
-
-	display_buffer(&buffer);
- 
 	return 0;
 
 }
@@ -53,8 +58,11 @@ void game_init(cell *snake, food *apple, buf *buffer, food *flag) {
  
 	buffer->snake = *snake;
 	buffer->apple = *apple;
+
+	gotoxy(snake->x, snake->y); printf("@");
+	gotoxy(apple->x, apple->y); printf("◎");
 	
-}
+	}
 
 void check_key(int *key) {
 
@@ -108,20 +116,20 @@ void fill_buffer(cell *snake, food *apple, buf *b) {
 }
 
 /*버퍼에 있는 위치와 달라졌을떄만 새로 그리는 함수*/
-void screen_flipping(cell *snake, food *apple, buf *buffer) {
+void render_obj(cell *snake, food *apple, buf *buffer) {
 
 	cell *new_c = snake;
 	cell *old_c = &buffer->snake;
 	food *old_f = &buffer->apple;
 
-	while (new_c){
+	while (new_c) {
 
 		if (old_c == NULL) {
 			gotoxy(new_c->x, new_c->y);
-			printf("@");	
+			printf("@");
 		}
 		if (new_c->x != old_c->x || new_c->y != old_c->y) {
-			gotoxy(old_c->x, old_c->y); 
+			gotoxy(old_c->x, old_c->y);
 			printf(" ");
 			gotoxy(new_c->x, new_c->y);
 			printf("@");
@@ -129,7 +137,7 @@ void screen_flipping(cell *snake, food *apple, buf *buffer) {
 
 		new_c = new_c->next;
 		old_c = old_c->next;
-		}
+	}
 
 	if (apple->x != old_f->x || apple->y != old_f->y) {
 		gotoxy(old_f->x, old_f->y);
@@ -137,8 +145,7 @@ void screen_flipping(cell *snake, food *apple, buf *buffer) {
 		gotoxy(apple->x, apple->y);
 		printf("◎");
 	}
-
-	
+ 
 }
 
  
@@ -430,8 +437,7 @@ void attach_tail(cell *head, int direction) {
 		
 
 void eat_food(int key, cell *snake, food *apple, bool *flag) {
-
-	
+ 
  
 	if (meet_food(snake, apple)) {
 
