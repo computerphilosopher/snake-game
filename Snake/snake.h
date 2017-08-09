@@ -6,8 +6,8 @@
 #define SAME 0
 #define ERROR -1
 
-#define BOARD_WIDTH 100 
-#define BOARD_HEIGHT 100
+#define BOARD_WIDTH 50 
+#define BOARD_HEIGHT 50 
 #define STRTING_POINT 512
  
 #define FOOD_COUNT  15
@@ -56,20 +56,20 @@ bool food_fail(food *apple, cell *snake);
 
 food generate_food(food *apple, cell *snake, bool *flag);
 
-bool meet_food(cell *snake, food *apple);
+bool meet_food(cell snake, food apple);
 
 void check_collision(int key, cell *snake, food *apple, bool *flag);
 
 void attach_tail(cell *head, int direction);
 
-void render_snake(cell *head);
+void render_snake(cell head);
 
-void render_food(food *apple, bool *flag);
+void delete_snake(cell head);
 
-void fill_buffer(cell *snake, food *apple, buf *b);
+void fill_buffer(cell snake, food apple, buf *b);
 
 void display_buffer(buf *b);
 
-void game_init(cell *snake, food *apple, buf *buffer, bool *flag);
+void game_init(cell snake, food *apple, buf *buffer, bool *flag);
 
-void render_obj(cell *snake, food *apple, buf *buffer);
+void render_obj(cell snake, food apple, buf buffer);

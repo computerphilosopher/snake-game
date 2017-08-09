@@ -28,9 +28,10 @@ int main() {
 
 	add_cell(&snake, create_cell(20, 20));
     
-	game_init(snake, &apple, &buffer, &food_flag);
+	game_init(*snake, &apple, &buffer, &food_flag);
     attach_tail(snake, key);
 
+	
 	while (true) {
 
 		Sleep(300);
@@ -40,12 +41,14 @@ int main() {
 		}
 
 		snake_control(key, snake);
-		render_obj(snake, &apple, &buffer);
-		fill_buffer(snake, &apple, &buffer);
+		check_collision(key, snake, &apple, &food_flag);
+		render_obj(*snake, apple, buffer);
+		
+		fill_buffer(*snake, apple, &buffer);
 		
 	}
 
- 
+
 	return 0;
 
 }
@@ -57,19 +60,39 @@ void gotoxy(int x, int y) {
 
 }
 
-void game_init(cell *snake, food *apple, buf *buffer, food *flag) {
+void game_init(cell snake, food *apple, buf *buffer, food *flag) {
 
-	cell *h = snake;
-
-	(*apple) = generate_food(apple, snake, flag);
+	
+	(*apple) = generate_food(apple, &snake, flag);
  
-	buffer->snake = *snake;
+	buffer->snake = snake;
 	buffer->apple = *apple;
 
-	render_obj(snake, apple, buffer);
-
+	render_snake(snake);
+ 
  }
 
+void render_snake(cell head) {
+	cell *h = &head;
+
+	while (h) {
+		gotoxy(h->x, h->y);
+		printf("@");
+		h = h->next;
+	}
+}
+
+void delete_snake(cell head) {
+
+	cell *h = &head;
+
+	while (h) {
+		gotoxy(h->x, h->y);
+		printf(" ");
+		h = h->next;
+	}
+
+}
 
 
 void check_key(int *key) {
@@ -116,48 +139,27 @@ void display_buffer(buf *b) {
 
 
 
-void fill_buffer(cell *snake, food *apple, buf *b) {
+void fill_buffer(cell snake, food apple, buf *b) {
 
-	b->apple = (*apple);
-	b->snake = (*snake);
+	b->apple = apple;
+	b->snake = snake;
 	
 }
 
 /*버퍼에 있는 위치와 달라졌을떄만 새로 그리는 함수*/
-void render_obj(cell *snake, food *apple, buf *buffer) {
+void render_obj(cell snake, food apple, buf buffer) {
 
-	cell *new_c = snake;
-	cell *old_c = &buffer->snake;
-	food *old_f = &buffer->apple;
+    cell *new_c = &snake;
+	cell *old_c = &buffer.snake;
 
-	while (new_c) {
+    food *old_f = &buffer.apple;
 
-		if (old_c == NULL) {			
-			gotoxy(new_c->x, new_c->y);
-			printf("@");
-		}
+	system("cls");
 
-		else if (new_c->x != old_c->x || new_c->y != old_c->y) {
-		
-			gotoxy(old_c->x, old_c->y);
-			printf(" ");
-			gotoxy(new_c->x, new_c->y);
-			printf("@");
-		}
+    render_snake(snake);
 
-		new_c = new_c->next;
-		
-		if (old_c) {
-			old_c = old_c->next;
-		}
-    }
-
-	if (apple->x != old_f->x || apple->y != old_f->y) {
-		gotoxy(old_f->x, old_f->y);
-		printf(" ");
-		gotoxy(apple->x, apple->y);
-		printf("◎");
-	}
+	gotoxy(apple.x, apple.y);
+	printf("*");
  
 }
 
@@ -385,9 +387,9 @@ food generate_food(food *apple, cell *snake, bool *flag) {
 }
 
  
-bool meet_food(cell *snake, food *apple) {
+bool meet_food(cell snake, food apple) {
 
-	return (snake->x == apple->x && snake->y == apple->y);
+	return (snake.x == apple.x && snake.y == apple.y);
 
 }
 
@@ -450,7 +452,7 @@ void attach_tail(cell *head, int direction) {
 void check_collision(int key, cell *snake, food *apple, bool *flag) {
  
  
-	if (meet_food(snake, apple)) {
+	if (meet_food(*snake, *apple)) {
 
 		attach_tail(snake,key);
 		(*flag) = false;
