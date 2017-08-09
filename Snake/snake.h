@@ -58,7 +58,7 @@ food generate_food(food *apple, cell *snake, bool *flag);
 
 bool meet_food(cell *snake, food *apple);
 
-void eat_food(int key, cell *snake, food *apple, bool *flag);
+void check_collision(int key, cell *snake, food *apple, bool *flag);
 
 void attach_tail(cell *head, int direction);
 

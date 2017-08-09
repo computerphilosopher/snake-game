@@ -17,30 +17,35 @@
  
 int main() {
 
-	bool food_flag = false;
+	bool food_flag = false; /* 음식이 이미 생성되었는지 체크하는 변수*/
  
 	int key = RIGHT;
 	int i = 0;
-
-	cell *snake = NULL;
+    cell *snake = NULL; 
 	food apple;
+
 	buf buffer;
 
-	add_cell(&snake, create_cell(5, 5));
- 
-    game_init(snake, &apple, &buffer, &food_flag);
+	add_cell(&snake, create_cell(20, 20));
+    
+	game_init(snake, &apple, &buffer, &food_flag);
+    attach_tail(snake, key);
 
-	while (1) {
+	while (true) {
+
 		Sleep(300);
-		if (_kbhit()) check_key(&key);
+
+		if (_kbhit()) {
+			check_key(&key);
+		}
+
 		snake_control(key, snake);
 		render_obj(snake, &apple, &buffer);
-		eat_food(key, snake, &apple, &food_flag);
 		fill_buffer(snake, &apple, &buffer);
 		
 	}
 
-	
+ 
 	return 0;
 
 }
@@ -54,15 +59,18 @@ void gotoxy(int x, int y) {
 
 void game_init(cell *snake, food *apple, buf *buffer, food *flag) {
 
+	cell *h = snake;
+
 	(*apple) = generate_food(apple, snake, flag);
  
 	buffer->snake = *snake;
 	buffer->apple = *apple;
 
-	gotoxy(snake->x, snake->y); printf("@");
-	gotoxy(apple->x, apple->y); printf("◎");
-	
-	}
+	render_obj(snake, apple, buffer);
+
+ }
+
+
 
 void check_key(int *key) {
 
@@ -88,13 +96,13 @@ void display_location(cell *head) {
 		printf("\n(%d, %d)\n", h->x, h->y);
 		h = h->next;
 	}
-	
-	}
+}
 
 void display_buffer(buf *b) {
 	
 	cell *c = &b->snake;
 	food *f = &b->apple;
+	
 
 	while (c) {
 		printf("snake:(%d, %d)\n", c->x, c->y);
@@ -110,8 +118,8 @@ void display_buffer(buf *b) {
 
 void fill_buffer(cell *snake, food *apple, buf *b) {
 
-	b->apple = *apple;
-	b->snake = *snake;
+	b->apple = (*apple);
+	b->snake = (*snake);
 	
 }
 
@@ -124,11 +132,13 @@ void render_obj(cell *snake, food *apple, buf *buffer) {
 
 	while (new_c) {
 
-		if (old_c == NULL) {
+		if (old_c == NULL) {			
 			gotoxy(new_c->x, new_c->y);
 			printf("@");
 		}
-		if (new_c->x != old_c->x || new_c->y != old_c->y) {
+
+		else if (new_c->x != old_c->x || new_c->y != old_c->y) {
+		
 			gotoxy(old_c->x, old_c->y);
 			printf(" ");
 			gotoxy(new_c->x, new_c->y);
@@ -136,8 +146,11 @@ void render_obj(cell *snake, food *apple, buf *buffer) {
 		}
 
 		new_c = new_c->next;
-		old_c = old_c->next;
-	}
+		
+		if (old_c) {
+			old_c = old_c->next;
+		}
+    }
 
 	if (apple->x != old_f->x || apple->y != old_f->y) {
 		gotoxy(old_f->x, old_f->y);
@@ -310,8 +323,6 @@ void snake_control(int key, cell *head) {
 		key = rotation_fail(key,head);
 	}
 	
- 
-	
 		switch (key) {
 
 		case UP:
@@ -407,7 +418,7 @@ void attach_tail(cell *head, int direction) {
 
 	int px; int py;
 
-	while (prev->next != NULL) {
+	while (prev->next) {
 		prev = prev->next;
 	}
 
@@ -416,19 +427,19 @@ void attach_tail(cell *head, int direction) {
 
 	switch (direction) {
 	case UP:
-		add_cell(&head, create_cell(px, ++py));
+		add_cell(&head, create_cell(px, py+1));
 		break;
 
 	case DOWN:
-		add_cell(&head, create_cell(px, --py));
+		add_cell(&head, create_cell(px, py+1));
 		break;
 
 	case RIGHT:
-		add_cell(&head, create_cell(--px, py));
+		add_cell(&head, create_cell(px-1, py));
 		break;
 
 	case LEFT:
-		add_cell(&head, create_cell(++px, py));
+		add_cell(&head, create_cell(px+1, py));
 		break;
 	}
 
@@ -436,7 +447,7 @@ void attach_tail(cell *head, int direction) {
 
 		
 
-void eat_food(int key, cell *snake, food *apple, bool *flag) {
+void check_collision(int key, cell *snake, food *apple, bool *flag) {
  
  
 	if (meet_food(snake, apple)) {
