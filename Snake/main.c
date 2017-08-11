@@ -23,28 +23,38 @@ int main() {
 	int i = 0;
     cell *snake = NULL; 
 	food apple;
+	cell *tail;
 
 	buf buffer;
 
 	add_cell(&snake, create_cell(20, 20));
+
+	tail = snake;
     
 	game_init(*snake, &apple, &buffer, &food_flag);
-    attach_tail(snake, key);
+
 
 	
 	while (true) {
 
-		Sleep(300);
+		Sleep(1000);
 
 		if (_kbhit()) {
 			check_key(&key);
 		}
 
 		snake_control(key, snake);
-		check_collision(key, snake, &apple, &food_flag);
+		check_collision(key, &snake, &apple, &food_flag);
 		render_obj(*snake, apple, buffer);
+
+		while (tail->next) {
+			tail = tail->next;
+		}
 		
-		fill_buffer(*snake, apple, &buffer);
+		gotoxy(1, 1);
+		printf("food: (%d, %d)", apple.x, apple.y);
+		display_location(snake);
+		printf("tail:(%d,%d)", tail->x, tail->y);
 		
 	}
 
@@ -102,10 +112,9 @@ void check_key(int *key) {
 		if ((*key) == 224) {
 			(*key) = _getch();
 		}
-
-	
-
+ 
  return;
+
 }
 
 
@@ -282,7 +291,7 @@ void add_cell(cell **head, cell *new_node){
 	}
 
 	else {
-		while (h->next!=NULL) {
+		while (h->next) {
 			h = h->next;
 			}
 
@@ -373,8 +382,8 @@ food generate_food(food *apple, cell *snake, bool *flag) {
 
 		srand((unsigned)time(NULL));
 
-		int random_x = (rand() % BOARD_WIDTH - 1) + 1;
-		int random_y = (rand() % BOARD_HEIGHT - 1) + 1;
+		int random_x = (rand() % BOARD_WIDTH)+1;
+		int random_y = (rand() % BOARD_HEIGHT)+1;
 
 		new_apple.x = random_x;
 		new_apple.y = random_y;
@@ -414,9 +423,9 @@ int head_direction(cell *head) {
  
 }
 
-void attach_tail(cell *head, int direction) {
+void attach_tail(cell **head, int direction) {
 
-	cell *prev = head;
+	cell *prev = *head;
 
 	int px; int py;
 
@@ -429,19 +438,19 @@ void attach_tail(cell *head, int direction) {
 
 	switch (direction) {
 	case UP:
-		add_cell(&head, create_cell(px, py+1));
+		add_cell(head, create_cell(px, py+1));
 		break;
 
 	case DOWN:
-		add_cell(&head, create_cell(px, py+1));
+		add_cell(head, create_cell(px, py+1));
 		break;
 
 	case RIGHT:
-		add_cell(&head, create_cell(px-1, py));
+		add_cell(head, create_cell(px-1, py));
 		break;
 
 	case LEFT:
-		add_cell(&head, create_cell(px+1, py));
+		add_cell(head, create_cell(px+1, py));
 		break;
 	}
 
@@ -449,17 +458,49 @@ void attach_tail(cell *head, int direction) {
 
 		
 
-void check_collision(int key, cell *snake, food *apple, bool *flag) {
- 
- 
-	if (meet_food(*snake, *apple)) {
+void check_collision(int key, cell **head, food *apple, bool *flag) {
 
-		attach_tail(snake,key);
-		(*flag) = false;
+	cell *prev = *head;
+
+	int px, py;
+    
+	while (prev->next) {
+		prev = prev->next;
+	}
+
+	px = prev->x;
+	py = prev->y;
+
+	 
+	if (meet_food(**head, *apple)) {
+		
+		switch (key) {
+	    case UP:
+		    add_cell(head, create_cell(px, ++py));
+		    break;
+		
+		case DOWN:
+		    add_cell(head, create_cell(px, ++py));
+		    break;
+		
+		case RIGHT:
+			add_cell(head, create_cell(++px, py));
+			break;
+
+	    case LEFT:
+		    add_cell(head, create_cell(--px, py));
+		    break;
+		}
+
+
+	    *flag = false;
+		*apple = generate_food(apple, head, flag);
+		return;
+		
 
 	}
 
-	else return;
+    else return;
 
 }
  

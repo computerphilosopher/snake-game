@@ -6,8 +6,8 @@
 #define SAME 0
 #define ERROR -1
 
-#define BOARD_WIDTH 50 
-#define BOARD_HEIGHT 50 
+#define BOARD_WIDTH 20
+#define BOARD_HEIGHT 20
 #define STRTING_POINT 512
  
 #define FOOD_COUNT  15
@@ -58,9 +58,9 @@ food generate_food(food *apple, cell *snake, bool *flag);
 
 bool meet_food(cell snake, food apple);
 
-void check_collision(int key, cell *snake, food *apple, bool *flag);
+void check_collision(int key, cell **head, food *apple, bool *flag);
 
-void attach_tail(cell *head, int direction);
+void attach_tail(cell **head, int direction);
 
 void render_snake(cell head);
 
