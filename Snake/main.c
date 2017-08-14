@@ -40,7 +40,7 @@ int main() {
 		render_obj(*snake, apple);
 
 		gotoxy(1, 1);
-		printf("%d", collide_with_map(*snake));
+		printf("%d", snake->length);
 
 	}
 
@@ -529,9 +529,10 @@ void check_collision(int key, cell **head, food *apple, bool *flag) {
 
 		*flag = false;
 		*apple = generate_food(apple, head, flag);
+
+		(*head)->length += 1;
 		return;
-
-
+ 
 	}
 
 	else return;
