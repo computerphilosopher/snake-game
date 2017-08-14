@@ -9,7 +9,7 @@
 #define BOARD_WIDTH 20 
 #define BOARD_HEIGHT 20 
 #define STRTING_POINT 512
- 
+
 #define FOOD_COUNT  15
 
 typedef struct cell {
@@ -17,9 +17,9 @@ typedef struct cell {
 	int x, y;
 
 	int length;
- 
+
 	struct cell *next;
-	
+
 }cell;
 
 typedef struct food {
@@ -31,11 +31,11 @@ typedef struct buf {
 
 	cell snake;
 	food apple;
-	
+
 }buf;
 
 
-void display_location(cell *head); 
+void display_location(cell *head);
 
 void gotoxy(int x, int y);
 
@@ -46,14 +46,14 @@ cell *create_cell(int cx, int cy);
 void add_cell(cell **snake, cell *new_node);
 
 void follow_head(cell *head);
- 
+
 void snake_control(int key, cell *head);
 
-void check_key(int *key); 
+void check_key(int *key);
 
 bool food_fail(food *apple, cell snake);
 
-food generate_food(food *apple, cell snake, bool *flag);
+food generate_food(food *apple, cell *snake, bool *flag);
 
 bool meet_food(cell snake, food apple);
 
@@ -63,8 +63,10 @@ void attach_tail(cell **head, int direction);
 
 void render_snake(cell head);
 
-void game_init(cell **snake, food *apple,  bool *flag);
+void game_init(cell **snake, food *apple, bool *flag);
 
 void render_obj(cell snake, food apple);
- 
+
+void draw_map(int starting_x, int starting_y);
+
 bool collision_itself(cell head);
