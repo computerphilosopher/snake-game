@@ -16,18 +16,23 @@
 
 int main() {
 
-	do {
-		bool food_flag = false; /*음식이 이미 생성되어 있는지 체크하는 변수 */
-		int key = RIGHT;
-		cell *snake = NULL;
-		food apple;
+	bool food_flag = false; /*음식이 이미 생성되어 있는지 체크하는 변수 */
+	int key = RIGHT;
+	cell *snake = NULL;
+	food apple;
 
-		bool restart = false;
+	bool restart;
 
-		game_init(&snake, &apple, &food_flag);
 
+	do{
+		
+		snake = NULL;
+		restart = false;
+ 
+	    game_init(&snake, &apple, &food_flag);
+	
 		while (true) {
-
+			
 			Sleep(300);
 
 			if (_kbhit()) {
@@ -41,6 +46,8 @@ int main() {
 			gotoxy(1, 1);
 			printf("%d\n", snake->length);
 			printf("(%d,%d)", collide_itself(*snake), collide_with_map(*snake));
+
+			if (restart == true) break;
 
 		}
 	} while (restart);
@@ -486,15 +493,17 @@ void check_collision(int key, cell **head, food *apple, bool *flag, bool *restar
 
 	else if (collide_itself(**head) || collide_with_map(**head)) {
 
-		game_over();
-		game_init(head, apple, flag);
+		game_over(restart);
+			
 	} 
 
 	else return;
 
 }
 
-void game_over() {
+void game_over(bool *restart) {
+
+	(*restart) = true;
 
 	int HalfWidth = BOARD_WIDTH / 2;
 	int HalfHeight = BOARD_HEIGHT / 2;

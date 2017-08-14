@@ -70,4 +70,4 @@ bool collide_itself(cell head);
 
 bool collide_with_map(cell head);
 
-void game_over(void);
+void game_over(bool *restart);
