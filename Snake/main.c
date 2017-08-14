@@ -20,8 +20,7 @@ int main() {
 	bool food_flag = false; /*음식이 이미 생성되어 있는지 체크하는 변수 */
 
 	int key = RIGHT;
-	int i = 0;
-	cell *snake = NULL;
+    cell *snake = NULL;
 	food apple;
  
 	game_init(&snake, &apple, &food_flag);
@@ -48,6 +47,7 @@ int main() {
 	return 0;
 
 }
+
 void gotoxy(int x, int y) {
 
 	COORD Pos = { x - 1, y - 1 };
@@ -79,18 +79,6 @@ void render_snake(cell head) {
 	}
 }
 
-void delete_snake(cell head) {
-
-	cell *h = &head;
-
-	while (h) {
-		gotoxy(h->x, h->y);
-		printf(" ");
-		h = h->next;
-	}
-
-}
-
 
 void check_key(int *key) {
 
@@ -104,8 +92,7 @@ void check_key(int *key) {
 
 }
 
-
-
+ 
 void display_location(cell *head) {
 
 	cell *h = head;
@@ -117,32 +104,7 @@ void display_location(cell *head) {
 	}
 }
 
-void display_buffer(buf *b) {
-
-	cell *c = &b->snake;
-	food *f = &b->apple;
-
-
-	while (c) {
-		printf("snake:(%d, %d)\n", c->x, c->y);
-		c = c->next;
-	}
-
-	printf("food:(%d,%d)", f->x, f->y);
-
-}
-
-
-
-
-void fill_buffer(cell snake, food apple, buf *b) {
-
-	b->apple = apple;
-	b->snake = snake;
-
-}
-
-
+ 
 void render_obj(cell snake, food apple) {
 
     system("cls");
@@ -363,6 +325,7 @@ bool food_fail(food apple, cell snake) {
 	while (c) {
 
 		if (apple.x == c->x && apple.y == c->y) return true;
+ 
 		c = c->next;
 		
 	}
@@ -401,62 +364,9 @@ bool meet_food(cell snake, food apple) {
 
 }
 
-int head_direction(cell *head) {
-
-	cell *h = head;
-	cell *n = h->next;
-
-	if (h->x == n->x && h->y == n->y) return ERROR;
-
-	else if (h->x != n->x && h->y != n->y) return ERROR;
-
-	else if (h->y < n->y) return UP;
-
-	else if (h->y > n->y) return DOWN;
-
-	else if (h->x > n->x) return RIGHT;
-
-	else if (h->x < n->x) return LEFT;
-
-	return 0;
-
-}
-
-int cell_direction(cell head, cell current, int key) {
-
-	cell *prev = &head;
-	cell *cur = &current;
-
-	while (prev->next) {
-
-		if (prev->next == cur) {
-			break;
-		}
-
-		prev = prev->next;
-
-	}
-
-	if (&head == cur) return key;
-
-	if (prev->x == cur->x && cur->y == cur->y) return ERROR;
-
-	else if (prev->x != cur->x && prev->y != cur->y) return ERROR;
-
-	else if (prev->x > cur->x) return RIGHT;
-
-	else if (prev->x < cur->x) return LEFT;
-
-	else if (prev->y > cur->y) return UP;
-
-	else if (prev->y < cur->y) return DOWN;
-
-
-}
-
 
 void attach_tail(cell **head, int key) {
-
+ 
 	cell *prev = *head;
 
 	int px, py;
@@ -518,8 +428,7 @@ bool collide_with_map(cell head) {
 		
 }
 
-
-
+ 
 void check_collision(int key, cell **head, food *apple, bool *flag) {
 
 
@@ -528,11 +437,10 @@ void check_collision(int key, cell **head, food *apple, bool *flag) {
 		attach_tail(head, key);
 
 		*flag = false;
-		*apple = generate_food(apple, head, flag);
+		*apple = generate_food(apple, *head, flag);
 
 		(*head)->length += 1;
-		return;
- 
+			
 	}
 
 	else return;

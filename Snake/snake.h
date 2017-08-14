@@ -10,7 +10,6 @@
 #define BOARD_HEIGHT 20 
 #define STRTING_POINT 512
 
-#define FOOD_COUNT  15
 
 typedef struct cell {
 
@@ -66,9 +65,7 @@ void render_snake(cell head);
 void game_init(cell **snake, food *apple, bool *flag);
 
 void render_obj(cell snake, food apple);
-
-void draw_map(int starting_x, int starting_y);
-
+ 
 bool collide_itself(cell head);
 
 bool collide_with_map(cell head);
