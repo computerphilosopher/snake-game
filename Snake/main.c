@@ -16,34 +16,35 @@
 
 int main() {
 
-	bool food_flag = false; /*음식이 이미 생성되어 있는지 체크하는 변수 */
+	do {
+		bool food_flag = false; /*음식이 이미 생성되어 있는지 체크하는 변수 */
+		int key = RIGHT;
+		cell *snake = NULL;
+		food apple;
 
-	int key = RIGHT;
-	int i = 0;
-	cell *snake = NULL;
-	food apple;
+		bool restart = false;
 
-	game_init(&snake, &apple, &food_flag);
+		game_init(&snake, &apple, &food_flag);
 
+		while (true) {
 
-	while (true) {
+			Sleep(300);
 
-		Sleep(300);
+			if (_kbhit()) {
+				check_key(&key);
+			}
 
-		if (_kbhit()) {
-			check_key(&key);
+			snake_control(key, snake);
+			check_collision(key, &snake, &apple, &food_flag, &restart);
+			render_obj(*snake, apple);
+
+			gotoxy(1, 1);
+			printf("%d\n", snake->length);
+			printf("(%d,%d)", collide_itself(*snake), collide_with_map(*snake));
+
 		}
-
-		snake_control(key, snake);
-		check_collision(key, &snake, &apple, &food_flag);
-		render_obj(*snake, apple);
-
-		gotoxy(1, 1);
-		printf("%d", snake->length);
-
-	}
-
-
+	} while (restart);
+ 
 	return 0;
 
 }
@@ -57,8 +58,9 @@ void gotoxy(int x, int y) {
 
 void game_init(cell **snake, food *apple, bool *flag) {
 
-
-	add_cell(snake, create_cell(20, 20));
+	system("mode con:cols=50 lines=25");
+ 
+	add_cell(snake, create_cell(BOARD_WIDTH/2, BOARD_HEIGHT/2));
 
 	(*snake)->length = 0;
 
@@ -467,7 +469,7 @@ bool collide_with_map(cell head) {
 
 
 
-void check_collision(int key, cell **head, food *apple, bool *flag) {
+void check_collision(int key, cell **head, food *apple, bool *flag, bool *restart) {
 
 
 	if (meet_food(**head, *apple)) {
@@ -475,27 +477,35 @@ void check_collision(int key, cell **head, food *apple, bool *flag) {
 		attach_tail(head, key);
 
 		*flag = false;
-		*apple = generate_food(apple, head, flag);
+		*apple = generate_food(apple, *head, flag);
 
 		(*head)->length += 1;
 		return;
 
 	}
 
-	/*else if (collide_itself(**head) || collide_with_map(**head)) {
+	else if (collide_itself(**head) || collide_with_map(**head)) {
+
 		game_over();
-	} */
+		game_init(head, apple, flag);
+	} 
 
 	else return;
 
 }
 
 void game_over() {
+
+	int HalfWidth = BOARD_WIDTH / 2;
+	int HalfHeight = BOARD_HEIGHT / 2;
+
 	system("cls");
-	gotoxy(BOARD_WIDTH / 2, BOARD_HEIGHT / 2);
+	gotoxy(HalfWidth,HalfHeight);
 	printf("YOU DIED\n");
 	
 	Sleep(2000);
-	printf("pleas any key to regame");
+	gotoxy(HalfWidth-8, HalfHeight+1);
+	printf("please any key to regame");
+	getchar();
 	
 }

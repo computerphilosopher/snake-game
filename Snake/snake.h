@@ -4,10 +4,10 @@
 #define LEFT 75
 #define RIGHT 77
 #define SAME 0
-#define ERROR -1
 
-#define BOARD_WIDTH 20 
-#define BOARD_HEIGHT 20 
+
+#define BOARD_WIDTH 50
+#define BOARD_HEIGHT 25 
 #define STRTING_POINT 512
 
 
@@ -50,13 +50,13 @@ void snake_control(int key, cell *head);
 
 void check_key(int *key);
 
-bool food_fail(food apple, cell *snake);
+bool food_fail(food apple, cell snake);
 
 food generate_food(food *apple, cell *snake, bool *flag);
 
 bool meet_food(cell snake, food apple);
 
-void check_collision(int key, cell **head, food *apple, bool *flag);
+void check_collision(int key, cell **head, food *apple, bool *flag, bool *restart);
 
 void attach_tail(cell **head, int direction);
 
