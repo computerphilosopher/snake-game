@@ -400,59 +400,6 @@ bool meet_food(cell snake, food apple) {
 
 }
 
-int head_direction(cell *head) {
-
-	cell *h = head;
-	cell *n = h->next;
-
-	if (h->x == n->x && h->y == n->y) return ERROR;
-
-	else if (h->x != n->x && h->y != n->y) return ERROR;
-
-	else if (h->y < n->y) return UP;
-
-	else if (h->y > n->y) return DOWN;
-
-	else if (h->x > n->x) return RIGHT;
-
-	else if (h->x < n->x) return LEFT;
-
-	return 0;
-
-}
-
-int cell_direction(cell head, cell current, int key) {
-
-	cell *prev = &head;
-	cell *cur = &current;
-
-	while (prev->next) {
-
-		if (prev->next == cur) {
-			break;
-		}
-
-		prev = prev->next;
-
-	}
-
-	if (&head == cur) return key;
-
-	if (prev->x == cur->x && cur->y == cur->y) return ERROR;
-
-	else if (prev->x != cur->x && prev->y != cur->y) return ERROR;
-
-	else if (prev->x > cur->x) return RIGHT;
-
-	else if (prev->x < cur->x) return LEFT;
-
-	else if (prev->y > cur->y) return UP;
-
-	else if (prev->y < cur->y) return DOWN;
-
-
-}
-
 
 void attach_tail(cell **head, int key) {
 
