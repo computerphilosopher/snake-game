@@ -39,13 +39,15 @@ int main() {
 				check_key(&key);
 			}
 
-			snake_control(key, snake);
+			snake_control(key, snake);	
 			check_collision(key, &snake, &apple, &food_flag, &restart);
 			render_obj(*snake, apple);
 
 			gotoxy(1, 1);
+	
 			printf("%d\n", snake->length);
-			printf("(%d,%d)", collide_itself(*snake), collide_with_map(*snake));
+			printf("%d", food_fail(apple, *snake));
+		
 
 			if (restart == true) break;
 
@@ -125,30 +127,7 @@ void display_location(cell *head) {
 	}
 }
 
-void display_buffer(buf *b) {
 
-	cell *c = &b->snake;
-	food *f = &b->apple;
-
-
-	while (c) {
-		printf("snake:(%d, %d)\n", c->x, c->y);
-		c = c->next;
-	}
-
-	printf("food:(%d,%d)", f->x, f->y);
-
-}
-
-
-
-
-void fill_buffer(cell snake, food apple, buf *b) {
-
-	b->apple = apple;
-	b->snake = snake;
-
-}
 
 
 void render_obj(cell snake, food apple) {
@@ -163,7 +142,7 @@ void render_obj(cell snake, food apple) {
 }
 
 
-bool out_of_board(int key, int x, int y) {
+bool out_of_board(int key, int x, int y){
 
 	switch (key) {
 	case UP:
@@ -288,8 +267,7 @@ void add_cell(cell **head, cell *new_node) {
 
 		h->next = new_node;
 		new_node->next = NULL;
-
-
+	
 	}
 
 
@@ -366,12 +344,15 @@ void snake_control(int key, cell *head) {
 
 bool food_fail(food apple, cell snake) {
 
-	cell *c = &snake;
-
+	cell *c = snake.next;
+	
 	while (c) {
 
-		if (apple.x == c->x && apple.y == c->y) return true;
-		c = c->next;
+		if (apple.x == c->x && apple.y == c->y) {
+			return true;
+		}
+		
+		else c = c->next;
 
 	}
 
@@ -381,23 +362,25 @@ bool food_fail(food apple, cell snake) {
 
 food generate_food(food *apple, cell *snake, bool *flag) {
 
-	food new_apple;
+	food new_apple = { 0,0 };
 
-	if ((*flag) == true) return *apple;
+	int random_x, random_y;
 
-	do {
-
+	if ( (*flag) == true) return *apple;
+ 
+	do{
 		srand((unsigned)time(NULL));
 
-		int random_x = (rand() % BOARD_WIDTH) + 1;
-		int random_y = (rand() % BOARD_HEIGHT) + 1;
+		random_x = (rand() % BOARD_WIDTH) + 1;
+		random_y = (rand() % BOARD_HEIGHT) + 1;
 
 		new_apple.x = random_x;
 		new_apple.y = random_y;
 
 		(*flag) = true;
-	} while (food_fail(*apple, *snake));
 
+	} while (food_fail(*apple,*snake));
+ 
 	return new_apple;
 
 }
@@ -487,8 +470,9 @@ void check_collision(int key, cell **head, food *apple, bool *flag, bool *restar
 		*apple = generate_food(apple, *head, flag);
 
 		(*head)->length += 1;
-		return;
 
+		return;
+		
 	}
 
 	else if (collide_itself(**head) || collide_with_map(**head)) {
