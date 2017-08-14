@@ -1,5 +1,4 @@
-﻿
-#include <stdio.h>
+﻿#include <stdio.h>
 
 #include <conio.h> 
 
@@ -20,23 +19,13 @@ int main() {
 	bool food_flag = false; /*음식이 이미 생성되어 있는지 체크하는 변수 */
 
 	int key = RIGHT;
-    cell *snake = NULL;
+	int i = 0;
+	cell *snake = NULL;
 	food apple;
-<<<<<<< HEAD
- 
+
 	game_init(&snake, &apple, &food_flag);
 
 
-=======
-	
-	int score = 0;
-	
-	add_cell(&snake, create_cell(20, 20));
-
-    
-	game_init(&snake, &apple, &food_flag);
- 
->>>>>>> origin/master
 	while (true) {
 
 		Sleep(300);
@@ -46,7 +35,6 @@ int main() {
 		}
 
 		snake_control(key, snake);
-<<<<<<< HEAD
 		check_collision(key, &snake, &apple, &food_flag);
 		render_obj(*snake, apple);
 
@@ -56,24 +44,9 @@ int main() {
 	}
 
 
-=======
-		check_collision(key, &snake, &apple, &food_flag, &score);
-		render_obj(*snake, apple);
-
-		gotoxy(1, 1); printf("%d", score);
-
-		
-		}
- 
->>>>>>> origin/master
 	return 0;
 
 }
-
-<<<<<<< HEAD
-=======
-
->>>>>>> origin/master
 void gotoxy(int x, int y) {
 
 	COORD Pos = { x - 1, y - 1 };
@@ -83,31 +56,17 @@ void gotoxy(int x, int y) {
 }
 
 void game_init(cell **snake, food *apple, bool *flag) {
-<<<<<<< HEAD
 
-=======
->>>>>>> origin/master
 
 	add_cell(snake, create_cell(20, 20));
 
 	(*snake)->length = 0;
-	
-<<<<<<< HEAD
+
 	(*apple) = generate_food(apple, *snake, flag);
- 
-    render_snake(**snake);
+
+	render_snake(**snake);
 
 }
-=======
-	(*apple) = generate_food(apple, **snake, flag);
-
-	(*snake)->length = 0;
- 
-    render_snake(**snake);
- 
- }
->>>>>>> origin/master
-
 
 void render_snake(cell head) {
 	cell *h = &head;
@@ -117,6 +76,18 @@ void render_snake(cell head) {
 		printf("@");
 		h = h->next;
 	}
+}
+
+void delete_snake(cell head) {
+
+	cell *h = &head;
+
+	while (h) {
+		gotoxy(h->x, h->y);
+		printf(" ");
+		h = h->next;
+	}
+
 }
 
 
@@ -132,7 +103,8 @@ void check_key(int *key) {
 
 }
 
- 
+
+
 void display_location(cell *head) {
 
 	cell *h = head;
@@ -144,10 +116,35 @@ void display_location(cell *head) {
 	}
 }
 
- 
+void display_buffer(buf *b) {
+
+	cell *c = &b->snake;
+	food *f = &b->apple;
+
+
+	while (c) {
+		printf("snake:(%d, %d)\n", c->x, c->y);
+		c = c->next;
+	}
+
+	printf("food:(%d,%d)", f->x, f->y);
+
+}
+
+
+
+
+void fill_buffer(cell snake, food apple, buf *b) {
+
+	b->apple = apple;
+	b->snake = snake;
+
+}
+
+
 void render_obj(cell snake, food apple) {
 
-    system("cls");
+	system("cls");
 
 	render_snake(snake);
 
@@ -284,12 +281,6 @@ void add_cell(cell **head, cell *new_node) {
 		new_node->next = NULL;
 
 
-<<<<<<< HEAD
-=======
-	(*head)->length += 1;
-
-		
->>>>>>> origin/master
 	}
 
 
@@ -365,36 +356,25 @@ void snake_control(int key, cell *head) {
 
 
 bool food_fail(food apple, cell snake) {
-<<<<<<< HEAD
 
 	cell *c = &snake;
 
 	while (c) {
 
 		if (apple.x == c->x && apple.y == c->y) return true;
- 
 		c = c->next;
-		
-=======
 
-	cell *c = &snake;
-
-	while (c) {
-		
-		if (apple.x == c->x && apple.y == c->y) return true; 
-		c = c->next;
->>>>>>> origin/master
 	}
 
 	return false;
 }
 
 
-food generate_food(food *apple, cell snake, bool *flag) {
+food generate_food(food *apple, cell *snake, bool *flag) {
 
 	food new_apple;
 
-	if ((*flag) == true) return *apple; 
+	if ((*flag) == true) return *apple;
 
 	do {
 
@@ -407,46 +387,75 @@ food generate_food(food *apple, cell snake, bool *flag) {
 		new_apple.y = random_y;
 
 		(*flag) = true;
-<<<<<<< HEAD
 	} while (food_fail(*apple, *snake));
-=======
-	} while (food_fail(*apple, snake)); /*���̰� ��� ���� ��ġ�� �����Ǹ� �ٽ� ����*/ 
->>>>>>> origin/master
 
 	return new_apple;
 
 }
 
-<<<<<<< HEAD
 
 bool meet_food(cell snake, food apple) {
 
 	return (snake.x == apple.x && snake.y == apple.y);
 
-=======
-bool collision_itself(cell head) {
+}
 
-	int hx = head.x;
-	int hy = head.y;
+int head_direction(cell *head) {
 
-	cell *c = (head.next);
+	cell *h = head;
+	cell *n = h->next;
 
-	while (c) {
-		if (c->x == hx && c->y == hy) return true;
-		c = c->next;
+	if (h->x == n->x && h->y == n->y) return ERROR;
+
+	else if (h->x != n->x && h->y != n->y) return ERROR;
+
+	else if (h->y < n->y) return UP;
+
+	else if (h->y > n->y) return DOWN;
+
+	else if (h->x > n->x) return RIGHT;
+
+	else if (h->x < n->x) return LEFT;
+
+	return 0;
+
+}
+
+int cell_direction(cell head, cell current, int key) {
+
+	cell *prev = &head;
+	cell *cur = &current;
+
+	while (prev->next) {
+
+		if (prev->next == cur) {
+			break;
+		}
+
+		prev = prev->next;
+
 	}
 
-	return false;
+	if (&head == cur) return key;
 
-		
-	
->>>>>>> origin/master
+	if (prev->x == cur->x && cur->y == cur->y) return ERROR;
+
+	else if (prev->x != cur->x && prev->y != cur->y) return ERROR;
+
+	else if (prev->x > cur->x) return RIGHT;
+
+	else if (prev->x < cur->x) return LEFT;
+
+	else if (prev->y > cur->y) return UP;
+
+	else if (prev->y < cur->y) return DOWN;
+
+
 }
 
 
-
 void attach_tail(cell **head, int key) {
- 
+
 	cell *prev = *head;
 
 	int px, py;
@@ -455,7 +464,6 @@ void attach_tail(cell **head, int key) {
 		prev = prev->next;
 	}
 
-	
 	px = prev->x;
 	py = prev->y;
 
@@ -479,9 +487,8 @@ void attach_tail(cell **head, int key) {
 
 }
 
-<<<<<<< HEAD
 bool collide_itself(cell head) {
-	
+
 	cell *c = head.next;
 
 	if (c == NULL) {
@@ -499,58 +506,34 @@ bool collide_itself(cell head) {
 			c = c->next;
 		}
 	}
-	
+
 	return false;
-	
+
 }
 
 bool collide_with_map(cell head) {
-	
+
 	return (head.x == 1 || head.x == BOARD_WIDTH || head.y == 1 || head.y == BOARD_HEIGHT);
-=======
-
-void game_over() {
-
 
 }
 
->>>>>>> origin/master
-		
-}
 
-<<<<<<< HEAD
- 
+
 void check_collision(int key, cell **head, food *apple, bool *flag) {
-=======
-void check_collision(int key, cell **head, food *apple, bool *flag, int *score) {
->>>>>>> origin/master
 
 
 	if (meet_food(**head, *apple)) {
 
 		attach_tail(head, key);
-<<<<<<< HEAD
 
 		*flag = false;
-		*apple = generate_food(apple, *head, flag);
-=======
-		
-	    *flag = false;
-
-		*apple = generate_food(apple, **head, flag);
-
-		(*score)++;
-
-		return;
-		
-	}
->>>>>>> origin/master
+		*apple = generate_food(apple, head, flag);
 
 		(*head)->length += 1;
-			
+		return;
+
 	}
 
 	else return;
-	
-}
 
+}

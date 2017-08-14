@@ -50,7 +50,7 @@ void snake_control(int key, cell *head);
 
 void check_key(int *key);
 
-bool food_fail(food apple, cell snake);
+bool food_fail(food apple, cell *snake);
 
 food generate_food(food *apple, cell *snake, bool *flag);
 
