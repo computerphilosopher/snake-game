@@ -17,7 +17,7 @@
 
 int main() {
 
-	bool food_flag = false; /* ������ �̹� �����Ǿ����� üũ�ϴ� ����*/
+	bool food_flag = false; /*음식이 이미 생성되어 있는지 체크하는 변수 */
 
 	int key = RIGHT;
 	int i = 0;
@@ -41,6 +41,9 @@ int main() {
 		snake_control(key, snake);
 		check_collision(key, &snake, &apple, &food_flag);
 		render_obj(*snake, apple);
+
+		gotoxy(1, 1);
+		printf("%d", collision_itself(*snake));
 
 	}
 
@@ -179,7 +182,7 @@ bool out_of_board(int key, int x, int y) {
 
 }
 
-/* �� �Ӹ��� ���������� ���ϴ� ��Ȳ ����*/
+/* 180도 회전 방지*/
 int rotation_fail(int key, cell *c) {
 
 	int cx = c->x;
@@ -482,6 +485,30 @@ void attach_tail(cell **head, int key) {
 		break;
 	}
 
+}
+
+bool collision_itself(cell head) {
+	
+	cell *c = head.next;
+
+	if (c == NULL) {
+		return false;
+	}
+
+	else {
+
+		while (c) {
+
+			if (c->x == head.x && c->y == head.y) {
+				return true;
+			}
+
+			c = c->next;
+		}
+	}
+	
+	return false;
+	
 }
 
 
