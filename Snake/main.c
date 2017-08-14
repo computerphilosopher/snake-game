@@ -434,6 +434,7 @@ void attach_tail(cell **head, int key) {
 
 }
 
+
 bool collide_itself(cell head) {
 
 	cell *c = head.next;
@@ -481,6 +482,20 @@ void check_collision(int key, cell **head, food *apple, bool *flag) {
 
 	}
 
+	/*else if (collide_itself(**head) || collide_with_map(**head)) {
+		game_over();
+	} */
+
 	else return;
 
+}
+
+void game_over() {
+	system("cls");
+	gotoxy(BOARD_WIDTH / 2, BOARD_HEIGHT / 2);
+	printf("YOU DIED\n");
+	
+	Sleep(2000);
+	printf("pleas any key to regame");
+	
 }
