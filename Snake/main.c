@@ -22,10 +22,21 @@ int main() {
 	int key = RIGHT;
     cell *snake = NULL;
 	food apple;
+<<<<<<< HEAD
  
 	game_init(&snake, &apple, &food_flag);
 
 
+=======
+	
+	int score = 0;
+	
+	add_cell(&snake, create_cell(20, 20));
+
+    
+	game_init(&snake, &apple, &food_flag);
+ 
+>>>>>>> origin/master
 	while (true) {
 
 		Sleep(300);
@@ -35,6 +46,7 @@ int main() {
 		}
 
 		snake_control(key, snake);
+<<<<<<< HEAD
 		check_collision(key, &snake, &apple, &food_flag);
 		render_obj(*snake, apple);
 
@@ -44,10 +56,24 @@ int main() {
 	}
 
 
+=======
+		check_collision(key, &snake, &apple, &food_flag, &score);
+		render_obj(*snake, apple);
+
+		gotoxy(1, 1); printf("%d", score);
+
+		
+		}
+ 
+>>>>>>> origin/master
 	return 0;
 
 }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/master
 void gotoxy(int x, int y) {
 
 	COORD Pos = { x - 1, y - 1 };
@@ -57,17 +83,31 @@ void gotoxy(int x, int y) {
 }
 
 void game_init(cell **snake, food *apple, bool *flag) {
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/master
 
 	add_cell(snake, create_cell(20, 20));
 
 	(*snake)->length = 0;
 	
+<<<<<<< HEAD
 	(*apple) = generate_food(apple, *snake, flag);
  
     render_snake(**snake);
 
 }
+=======
+	(*apple) = generate_food(apple, **snake, flag);
+
+	(*snake)->length = 0;
+ 
+    render_snake(**snake);
+ 
+ }
+>>>>>>> origin/master
+
 
 void render_snake(cell head) {
 	cell *h = &head;
@@ -244,6 +284,12 @@ void add_cell(cell **head, cell *new_node) {
 		new_node->next = NULL;
 
 
+<<<<<<< HEAD
+=======
+	(*head)->length += 1;
+
+		
+>>>>>>> origin/master
 	}
 
 
@@ -319,6 +365,7 @@ void snake_control(int key, cell *head) {
 
 
 bool food_fail(food apple, cell snake) {
+<<<<<<< HEAD
 
 	cell *c = &snake;
 
@@ -328,13 +375,22 @@ bool food_fail(food apple, cell snake) {
  
 		c = c->next;
 		
+=======
+
+	cell *c = &snake;
+
+	while (c) {
+		
+		if (apple.x == c->x && apple.y == c->y) return true; 
+		c = c->next;
+>>>>>>> origin/master
 	}
 
 	return false;
 }
 
 
-food generate_food(food *apple, cell *snake, bool *flag) {
+food generate_food(food *apple, cell snake, bool *flag) {
 
 	food new_apple;
 
@@ -351,18 +407,42 @@ food generate_food(food *apple, cell *snake, bool *flag) {
 		new_apple.y = random_y;
 
 		(*flag) = true;
+<<<<<<< HEAD
 	} while (food_fail(*apple, *snake));
+=======
+	} while (food_fail(*apple, snake)); /*���̰� ��� ���� ��ġ�� �����Ǹ� �ٽ� ����*/ 
+>>>>>>> origin/master
 
 	return new_apple;
 
 }
 
+<<<<<<< HEAD
 
 bool meet_food(cell snake, food apple) {
 
 	return (snake.x == apple.x && snake.y == apple.y);
 
+=======
+bool collision_itself(cell head) {
+
+	int hx = head.x;
+	int hy = head.y;
+
+	cell *c = (head.next);
+
+	while (c) {
+		if (c->x == hx && c->y == hy) return true;
+		c = c->next;
+	}
+
+	return false;
+
+		
+	
+>>>>>>> origin/master
 }
+
 
 
 void attach_tail(cell **head, int key) {
@@ -375,6 +455,7 @@ void attach_tail(cell **head, int key) {
 		prev = prev->next;
 	}
 
+	
 	px = prev->x;
 	py = prev->y;
 
@@ -398,6 +479,7 @@ void attach_tail(cell **head, int key) {
 
 }
 
+<<<<<<< HEAD
 bool collide_itself(cell head) {
 	
 	cell *c = head.next;
@@ -425,19 +507,44 @@ bool collide_itself(cell head) {
 bool collide_with_map(cell head) {
 	
 	return (head.x == 1 || head.x == BOARD_WIDTH || head.y == 1 || head.y == BOARD_HEIGHT);
+=======
+
+void game_over() {
+
+
+}
+
+>>>>>>> origin/master
 		
 }
 
+<<<<<<< HEAD
  
 void check_collision(int key, cell **head, food *apple, bool *flag) {
+=======
+void check_collision(int key, cell **head, food *apple, bool *flag, int *score) {
+>>>>>>> origin/master
 
 
 	if (meet_food(**head, *apple)) {
 
 		attach_tail(head, key);
+<<<<<<< HEAD
 
 		*flag = false;
 		*apple = generate_food(apple, *head, flag);
+=======
+		
+	    *flag = false;
+
+		*apple = generate_food(apple, **head, flag);
+
+		(*score)++;
+
+		return;
+		
+	}
+>>>>>>> origin/master
 
 		(*head)->length += 1;
 			
