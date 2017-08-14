@@ -352,12 +352,15 @@ void snake_control(int key, cell *head) {
 }
 
 
-bool food_fail(food *apple, cell *snake) {
+bool food_fail(food apple, cell snake) {
 
-	while (snake) {
+	cell *c = &snake;
 
-		if (apple->x == snake->x && apple->y == snake->y) return true;
-		snake = snake->next;
+	while (c) {
+
+		if (apple.x == c->x && apple.y == c->y) return true;
+		c = c->next;
+		
 	}
 
 	return false;
@@ -381,7 +384,7 @@ food generate_food(food *apple, cell *snake, bool *flag) {
 		new_apple.y = random_y;
 
 		(*flag) = true;
-	} while (food_fail(apple, snake));
+	} while (food_fail(*apple, *snake));
 
 	return new_apple;
 
