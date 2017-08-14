@@ -69,4 +69,6 @@ void render_obj(cell snake, food apple);
 
 void draw_map(int starting_x, int starting_y);
 
-bool collision_itself(cell head);
+bool collide_itself(cell head);
+
+bool collide_with_map(cell head);

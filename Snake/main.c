@@ -23,9 +23,6 @@ int main() {
 	int i = 0;
 	cell *snake = NULL;
 	food apple;
-
-
-	add_cell(&snake, create_cell(20, 20));
  
 	game_init(&snake, &apple, &food_flag);
 
@@ -43,7 +40,7 @@ int main() {
 		render_obj(*snake, apple);
 
 		gotoxy(1, 1);
-		printf("%d", collision_itself(*snake));
+		printf("%d", collide_with_map(*snake));
 
 	}
 
@@ -62,8 +59,12 @@ void gotoxy(int x, int y) {
 void game_init(cell **snake, food *apple, bool *flag) {
 
 
-	(*apple) = generate_food(apple, *snake, flag);
+	add_cell(snake, create_cell(20, 20));
 
+	(*snake)->length = 0;
+	
+	(*apple) = generate_food(apple, *snake, flag);
+ 
     render_snake(**snake);
 
 }
@@ -487,7 +488,7 @@ void attach_tail(cell **head, int key) {
 
 }
 
-bool collision_itself(cell head) {
+bool collide_itself(cell head) {
 	
 	cell *c = head.next;
 
@@ -511,6 +512,12 @@ bool collision_itself(cell head) {
 	
 }
 
+bool collide_with_map(cell head) {
+	
+	return (head.x == 1 || head.x == BOARD_WIDTH || head.y == 1 || head.y == BOARD_HEIGHT);
+		
+}
+
 
 
 void check_collision(int key, cell **head, food *apple, bool *flag) {
@@ -528,5 +535,6 @@ void check_collision(int key, cell **head, food *apple, bool *flag) {
 	}
 
 	else return;
-
+	
 }
+
